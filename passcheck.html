@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Password Checker</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f7f6; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 350px; }
+        h2 { margin-top: 0; font-size: 1.2rem; color: #333; }
+        
+        .input-group { position: relative; margin: 20px 0; }
+        input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #3498db; }
+        
+        #toggleBtn { position: absolute; right: 10px; top: 12px; cursor: pointer; border: none; background: none; color: #888; font-weight: bold; }
+        
+        #meter-container { height: 8px; width: 100%; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        #bar { height: 100%; width: 0%; transition: width 0.4s ease, background-color 0.4s; }
+        
+        #text { font-size: 0.85rem; font-weight: 600; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Password Strength</h2>
+    <div class="input-group">
+        <input type="password" id="pass" placeholder="Create a password...">
+        <button id="toggleBtn">Show</button>
+    </div>
+    <div id="meter-container"><div id="bar"></div></div>
+    <div id="text">Enter a password</div>
+</div>
+
+<script>
+    const pass = document.getElementById('pass');
+    const bar = document.getElementById('bar');
+    const text = document.getElementById('text');
+    const btn = document.getElementById('toggleBtn');
+
+    // Toggle Visibility
+    btn.addEventListener('click', () => {
+        const type = pass.getAttribute('type') === 'password' ? 'text' : 'password';
+        pass.setAttribute('type', type);
+        btn.innerText = type === 'password' ? 'Show' : 'Hide';
+    });
+
+    // Strength Logic
+    pass.addEventListener('input', () => {
+        const val = pass.value;
+        let score = 0;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[a-z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        const colors = ['#ff4757', '#ff4757', '#ffa502', '#2ed573', '#2ed573'];
+        const labels = ['Too Short', 'Weak', 'Fair', 'Good', 'Strong'];
+
+        if (val.length === 0) {
+            bar.style.width = '0%';
+            text.innerText = 'Enter a password';
+        } else {
+            bar.style.width = (score * 20) + '%';
+            bar.style.backgroundColor = colors[score - 1] || '#ff4757';
+            text.innerText = labels[score - 1] || 'Weak';
+        }
+    });
+</script>
+
+</body>
+</html>
